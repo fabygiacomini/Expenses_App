@@ -11,7 +11,22 @@ class TransactionList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 300, // essa propriedade é muito importante, pois tendo altura "infinita" isso geraria um erro
-      child: ListView.builder(
+      child: transactions.isEmpty ? Column(
+        children: <Widget>[
+          Text(
+            'Nenhuma Transação Cadastrada!',
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          SizedBox(height: 20), // espaço entre o texto e o container da imagem
+          Container(
+            height: 200,
+            child: Image.asset(
+              'assets/images/waiting.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+        ],
+      ) : ListView.builder(
         itemCount: transactions.length,
         itemBuilder: (ctx, index) { // economizamos memória renderizando apenas alguns itens na tela conforme a mesma é scrollada
           final tr = transactions[index];
@@ -23,9 +38,10 @@ class TransactionList extends StatelessWidget {
                   margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                   decoration: BoxDecoration(
                     border: Border.all(
-                    color: Colors.purple,
-                    width: 2,
-                  )),
+                      color: Theme.of(context).primaryColor, // pegar cor padrão do tema definido no MaterialApp (main.dart)
+                      width: 2,
+                    )
+                  ),
                   padding: EdgeInsets.all(10),
                   child: Text(
                     'R\$ ${tr.value.toStringAsFixed(2)}', // interpolação e casas decimais
@@ -38,9 +54,13 @@ class TransactionList extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(tr.title,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
+                    Text(
+                      tr.title,
+                      style: Theme.of(context).textTheme.headline6,
+                        // style: TextStyle(
+                        //     fontWeight: FontWeight.bold,
+                        //     fontSize: 16)
+                    ),
                     Text(
                         DateFormat('d MMM y')
                             .format(tr.date), // do pacote intl - externo
