@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class TransactionForm extends StatefulWidget {
-  final void Function(String, double) onSubmit;
+  final void Function(String, double, DateTime) onSubmit;
 
   TransactionForm(this.onSubmit);
 
@@ -9,49 +10,94 @@ class TransactionForm extends StatefulWidget {
   _TransactionFormState createState() => _TransactionFormState();
 }
 
-class _TransactionFormState extends State<TransactionForm> { // o underline indica que a classe/método/variável é privado
-  final titleController = TextEditingController();
+class _TransactionFormState extends State<TransactionForm> {
+  // o underline indica que a classe/método/variável é privado
+  final _titleController = TextEditingController();
 
-  final valueController = TextEditingController();
+  final _valueController = TextEditingController();
+
+  DateTime _selectedDate = DateTime.now();
 
   _submitForm() {
-    final title = titleController.text;
-    final value = double.tryParse(valueController.text) ?? 0.0;
+    final title = _titleController.text;
+    final value = double.tryParse(_valueController.text) ?? 0.0;
 
-    if (title.isEmpty || value <= 0) {
+    if (title.isEmpty || value <= 0 || _selectedDate == null) {
       return;
     }
-    widget.onSubmit(title, value);
+    widget.onSubmit(title, value, _selectedDate);
+  }
+
+  _showDatePicker() {
+    showDatePicker(
+      // retorna um Future (função assíncrona)
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2019),
+      lastDate: DateTime.now(),
+    ).then((pickedDate) {
+      // vai ser executado apenas depois da ação do usuário a qual estamos esperando
+      setState(() {
+        _selectedDate = pickedDate;
+      });
+    });
+    // depois do then vai ser executado sem esperar o evento do then, ou seja, imediatamente após o que veio antes do then
   }
 
   Widget build(BuildContext context) {
     return Card(
-      elevation:5,
+      elevation: 5,
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
           children: <Widget>[
             TextField(
-              controller: titleController,
-              onSubmitted: (_) => _submitForm(), // o "_" é usado quando precisamos passar um parâmetro, mas não queremos usá-lo
+              controller: _titleController,
+              onSubmitted: (_) =>
+                  _submitForm(), // o "_" é usado quando precisamos passar um parâmetro, mas não queremos usá-lo
               decoration: InputDecoration(
                 labelText: 'Título',
               ),
             ),
             TextField(
-              controller: valueController,
+              controller: _valueController,
               keyboardType: TextInputType.numberWithOptions(decimal: true),
               onSubmitted: (_) => _submitForm(),
               decoration: InputDecoration(
                 labelText: 'Valor (R\$)',
               ),
             ),
+            Container(
+              height: 70,
+              child: Row(
+                children: <Widget>[
+                  Expanded( // alinha o texto e o botão, cada um alinhado com uma lado da tela
+                    child: Text(
+                      _selectedDate == null
+                          ? 'Nenhuma data selecionada!'
+                          : 'Data selecionada: ${DateFormat('dd/MM/y').format(_selectedDate)}',
+                    ),
+                  ),
+                  FlatButton(
+                    textColor: Theme.of(context).primaryColor,
+                    onPressed: _showDatePicker,
+                    child: Text(
+                      'Selecionar Data',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                FlatButton(
+                RaisedButton(
                   child: Text('Nova Transação'),
-                  textColor: Colors.purple,
+                  color: Theme.of(context).primaryColor,
+                  textColor: Theme.of(context).textTheme.button.color,
                   onPressed: _submitForm,
                 ),
               ],

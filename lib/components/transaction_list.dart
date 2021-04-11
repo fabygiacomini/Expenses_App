@@ -4,74 +4,70 @@ import 'package:intl/intl.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
+  final void Function(String) onRemove;
 
-  TransactionList(this.transactions);
+  TransactionList(this.transactions, this.onRemove);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300, // essa propriedade é muito importante, pois tendo altura "infinita" isso geraria um erro
-      child: transactions.isEmpty ? Column(
-        children: <Widget>[
-          Text(
-            'Nenhuma Transação Cadastrada!',
-            style: Theme.of(context).textTheme.headline6,
-          ),
-          SizedBox(height: 20), // espaço entre o texto e o container da imagem
-          Container(
-            height: 200,
-            child: Image.asset(
-              'assets/images/waiting.png',
-              fit: BoxFit.cover,
-            ),
-          ),
-        ],
-      ) : ListView.builder(
-        itemCount: transactions.length,
-        itemBuilder: (ctx, index) { // economizamos memória renderizando apenas alguns itens na tela conforme a mesma é scrollada
-          final tr = transactions[index];
-          return Card(
-            child: Row(
+      height:
+          430, // essa propriedade é muito importante, pois tendo altura "infinita" isso geraria um erro
+      child: transactions.isEmpty
+          ? Column(
               children: <Widget>[
+                Text(
+                  'Nenhuma Transação Cadastrada!',
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+                SizedBox(
+                    height: 20), // espaço entre o texto e o container da imagem
                 Container(
-                  // usar Container permite usar estilos (margin, padding, etc)
-                  margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Theme.of(context).primaryColor, // pegar cor padrão do tema definido no MaterialApp (main.dart)
-                      width: 2,
-                    )
-                  ),
-                  padding: EdgeInsets.all(10),
-                  child: Text(
-                    'R\$ ${tr.value.toStringAsFixed(2)}', // interpolação e casas decimais
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: Colors.purple),
+                  height: 200,
+                  child: Image.asset(
+                    'assets/images/waiting.png',
+                    fit: BoxFit.cover,
                   ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
+              ],
+            )
+          : ListView.builder(
+              itemCount: transactions.length,
+              itemBuilder: (ctx, index) {
+                // economizamos memória renderizando apenas alguns itens na tela conforme a mesma é scrollada
+                final tr = transactions[index];
+                return Card(
+                  elevation: 5,
+                  margin: EdgeInsets.symmetric(
+                    horizontal: 5,
+                    vertical: 8,
+                  ),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      radius: 30,
+                      child: Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: FittedBox(
+                          child: Text('R\$${tr.value}'),
+                        ),
+                      ),
+                    ),
+                    title: Text(
                       tr.title,
                       style: Theme.of(context).textTheme.headline6,
-                        // style: TextStyle(
-                        //     fontWeight: FontWeight.bold,
-                        //     fontSize: 16)
                     ),
-                    Text(
-                        DateFormat('d MMM y')
-                            .format(tr.date), // do pacote intl - externo
-                        style: TextStyle(color: Colors.grey)),
-                  ],
-                )
-              ],
+                    subtitle: Text(
+                      DateFormat('d MMM y').format(tr.date),
+                    ),
+                    trailing: IconButton( // botão para deletar a transação
+                      icon: Icon(Icons.delete),
+                      color: Theme.of(context).errorColor,
+                      onPressed: () => onRemove(tr.id),
+                    ),
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }
