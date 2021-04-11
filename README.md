@@ -1,16 +1,7 @@
 # expenses
 
-A new Flutter project.
+Um app de despesas pessoais.<br>
+As despesas podem ser inseridas de acordo com os dias, e serão mostradas as despesas semanais na forma de um gráfico de barras.<br>
+As barras são calculadas de acordo com os gastos totais da semana, e são pintadas conforme a porcentagem de gastos de cada um dos dias.<br>
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![](/test/printmainscreen.png)
