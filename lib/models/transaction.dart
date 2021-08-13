@@ -4,10 +4,10 @@ class Transaction {
   final double value;
   final DateTime date;
 
-  Transaction({ // as chaves indicam que estamos definindo os atributos nomeados
-    this.id, 
-    this.title,
-    this.value,
-    this.date
-  });
+  Transaction(
+      { // as chaves indicam que estamos definindo os atributos nomeados
+      this.id,
+      this.title,
+      this.value,
+      this.date});
 }
